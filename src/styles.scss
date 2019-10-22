@@ -4,4 +4,20 @@ html, body {
   padding: 0;
 
   height: 100%;
+
+  background-color: #303030;
+}
+
+.card-body{
+  background-color: #424242;
+}
+
+.card .card-body .card-text {
+  color: #FFFFF3 !important;
+  font-size: .9rem;
+  font-weight: 400;
+}
+
+h4{
+  color: #FFF;
 }
