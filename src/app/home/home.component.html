@@ -1,4 +1,9 @@
-<div class="container-fluid h-100 w-100 d-flex align-items-center justify-content-center">
+<mdb-card class="mt-2 h-50">
+  <mdb-card-body class="h-100">
+    <webview #webViewId class="h-100" src="https://campusvirtual.unir.net/portal" disablewebsecurity></webview>
+  </mdb-card-body>
+</mdb-card>
+<div class="container-fluid mt-2 w-100 d-flex align-items-center justify-content-center">
   <div class="col col-lg-8">
     <mdb-card>
       <mdb-card-body>
@@ -17,9 +22,10 @@
 
       </mdb-card-body>
     </mdb-card>
-    <mdb-card class="mt-5">
+    <button (click)="download()">DOWNLOAD</button>
+    <mdb-card class="mt-2">
       <mdb-card-body>
-        <form (ngSubmit)="onSubmit()" [formGroup]="libraryForm" class="text-center  p-5">
+        <form (ngSubmit)="onSubmit()" [formGroup]="libraryForm" class="text-center  pt-2 pb-2">
           <!-- JSESSIONID -->
           <input formControlName="jSessionId" type="text" id="FormJSessionId" class="form-control mb-4"
             placeholder="JSESSIONID" />

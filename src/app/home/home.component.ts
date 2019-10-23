@@ -1,15 +1,24 @@
-import { Component, OnInit } from "@angular/core";
-import { Hmacsha1Service } from "../core/services";
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  ElementRef,
+  ViewChild
+} from "@angular/core";
+import { Hmacsha1Service, ElectronService } from "../core/services";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { CookieService } from "ngx-cookie-service";
+import { WebviewTag } from "electron";
 
 @Component({
   selector: "app-home",
   templateUrl: "./home.component.html",
   styleUrls: ["./home.component.scss"]
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, AfterViewInit {
+  @ViewChild("webViewId", { static: false }) webview: ElementRef;
+
   libraryForm = new FormGroup({
     jSessionId: new FormControl("", Validators.required),
     bookId: new FormControl("", Validators.required),
@@ -22,12 +31,125 @@ export class HomeComponent implements OnInit {
   constructor(
     private hMacSha1Service: Hmacsha1Service,
     private http: HttpClient,
-    private cookieService: CookieService
+    private cookieService: CookieService,
+    private electronService: ElectronService
   ) {}
   // http://bv.unir.net:2116/ib/NPcd/IB_Escritorio_Visualizar?cod_primaria=1000193&libro=4143
   // http://bv.unir.net:2116/ib/IB_Browser?pagina=1&libro=4143&ultpag=1&id=f38dc7a54df8773c3118b2710ff375f85b210fce
   ngOnInit() {}
 
+  ngAfterViewInit() {
+    let webviewNative: WebviewTag = this.webview.nativeElement;
+    console.log(webviewNative);
+    webviewNative.addEventListener("dom-ready", () => {
+      console.log(
+        webviewNative
+          .getWebContents()
+          .session.cookies.get(
+            { url: "http://bv.unir.net:2116/ib/NPcd/" },
+            (error: Error, cookies: Electron.Cookie[]) => {
+              // console.log("error", error);
+              console.log("cookies", cookies);
+              // let cookieStr = "";
+              for (let c of cookies) {
+                let info = c;
+                // cookieStr += `${info.name}=${info.value};`;
+                // console.log(info.value, info.name);
+                if (info.name === "JSESSIONID") {
+                  console.log(info);
+                }
+              }
+              // console.log(cookieStr);
+            }
+          )
+      );
+      // this.electronService.remote.session.defaultSession.on(
+      //   "will-download",
+      //   (event, item, webContents) => {
+      //     event.preventDefault();
+      //     require("request")(item.getURL(), data => {
+      //       require("fs").writeFileSync("/somewhere", data);
+      //       console.log("data", data);
+      //       console.log("item", item);
+      //       console.log("webcontents", webContents);
+      //     });
+      //   }
+      // );
+
+      //(method) Electron.Session.on(event: "will-download", listener: (event: Electron.Event, item: Electron.DownloadItem, webContents: Electron.WebContents) => void): Electron.Session
+      //Emitted when Electron is about to download item in webContents.Calling event.preventDefault()
+      // will cancel the download and item will not be available from next tick of the process.
+
+      webviewNative.getWebContents().session.cookies.set({
+        url: "http://bv.unir.net:2116/ib",
+        name: "JSESSIONID",
+        value: "E8171293A88D476918E8599043A90D2B",
+        domain: "bv.unir.net"
+      });
+
+      // webviewNative.loadURL(
+      //   "http://bv.unir.net:2116/ib/IB_Browser?pagina=1&libro=4143&ultpag=1&id=b00fecc3bb84c4350816694ac0c29c742e05ed2f"
+      // );
+      // webviewNative
+      //   .getWebContents()
+      //   .session.on("will-download", (event, item, webContents) => {
+      //     console.log("will download");
+      //     console.log(item.getSavePath());
+      //     // event.preventDefault();
+      //   });
+    });
+
+    webviewNative.addEventListener("new-window", e => {
+      const protocol = require("url").parse(e.url).protocol;
+      if (protocol === "http:" || protocol === "https:") {
+        console.log(e.url);
+        if (!e.url.includes("https://bv.unir.net:2610/2.0.0/link")) {
+          webviewNative.loadURL(e.url);
+        } else {
+          console.log(e);
+          // this.electronService.remote.net
+          //   .request({
+          //     method: "POST",
+          //     url: e.url
+          //   })
+          //   .on("response", response => {
+          //     console.log(`STATUS: ${response.statusCode}`);
+          //     response.on("error", error => {
+          //       console.log(`ERROR: ${JSON.stringify(error)}`);
+          //     });
+          //   });
+          // const request = net.request({
+          //   method: 'GET',
+          //   protocol: 'https:',
+          //   hostname: 'github.com',
+          //   port: 443,
+          //   path: '/'
+          // })
+        }
+      }
+    });
+    // Modificar el user agent para todas las consultas de las siguientes urls.
+    // const filter = {
+    //   urls: ["https://bv.unir.net:2610/2.0.0/link*"]
+    // };
+    // this.electronService.remote.session.defaultSession.webRequest.onBeforeSendHeaders(
+    //   filter,
+    //   (details, callback) => {
+    //     console.log("details", details);
+    //     callback({ requestHeaders: details.requestHeaders });
+
+    //     // callback({ cancel : true });
+    //   }
+    // );
+    // console.log(this.electronService.remote.session);
+  }
+
+  download() {
+    let webviewNative: WebviewTag = this.webview.nativeElement;
+    webviewNative.loadURL(
+      "http://bv.unir.net:2116/ib/IB_Browser?pagina=1&libro=4143&id=b00fecc3bb84c4350816694ac0c29c742e05ed2f"
+    );
+  }
   onSubmit() {
     console.log(this.libraryForm);
     if (this.libraryForm.valid) {
