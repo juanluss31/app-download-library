@@ -1,7 +1,7 @@
 {
   "name": "app-download-library",
   "version": "0.0.1",
-  "description": "Aplicacion que sirve para descargar libros desde la plataforma Ingebook",
+  "description": "Aplicacion que sirve para generar URL de libros de la plataforma Ingebook",
   "homepage": "https://github.com/Izayer/app-download-library",
   "author": {
     "name": "Iker Izaguirre",

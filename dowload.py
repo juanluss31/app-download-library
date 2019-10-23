@@ -4,16 +4,9 @@ import os
 import sys
 import requests
 
-cookies = {'JSESSIONID': 'B0B5285547B7058A8221AD036D7E28C0',
+cookies = {'JSESSIONID': 'E13AB83CB7D69C43C3083A6565617AEE',
            'ezproxy': 'z8wprER67biu2Pi'}
-
-# r = requests.get(
-#     'http://bv.unir.net:2116/ib/IB_Browser?pagina=1&libro=4143&id=0c386e54d9c67029abf71181e4bfd3b22f2e13cd', cookies=cookies)
-# if r.status_code == 200:
-#     print('Success!')
-#     print(r.content)
-# elif r.status_code == 404:
-#     print('Not Found.')
+pages = ["http://bv.unir.net:2116/ib/IB_Browser?pagina=2&libro=4143&id=3e5cbbc2ceb2010b122ad0cd9aff027da205b8cd"]
 
 
 def downloadFile(url, downloadDir, fileName):
@@ -34,10 +27,11 @@ def downloadFile(url, downloadDir, fileName):
 # Path donde se encuentra el ficher
 scriptPath = sys.path[0]
 
-# Un directorio mas atras crea la carpeta UnirLibrary
+# Un directorio mas atras crea la carpeta UnirLibrary + Book ID
+bookId = parse.parse_qs(parse.urlparse(pages[0]).query)['libro'][0]
 downloadPath = os.path.join(scriptPath, 'UnirLibrary')
+downloadPath = os.path.join(downloadPath, bookId)
 
-pages = ["http://bv.unir.net:2116/ib/IB_Browser?pagina=1&libro=4143&id=8a02073219026586d310c503bac7307eaad195ad"]
 # url = sys.argv[1]
 # http://bv.unir.net:2116/ib/IB_Browser?pagina=1&libro=4143&ultpag=1&id=0c386e54d9c67029abf71181e4bfd3b22f2e13cd
 # fileName = sys.argv[2]

@@ -1,6 +1,7 @@
-import { Component, OnInit, AfterViewInit } from "@angular/core";
+import { Component, OnInit, AfterViewInit, ViewChild } from "@angular/core";
 import { Hmacsha1Service } from "../core/services";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
+import { ModalDirective } from "angular-bootstrap-md";
 
 @Component({
   selector: "app-home",
@@ -8,6 +9,8 @@ import { FormGroup, FormControl, Validators } from "@angular/forms";
   styleUrls: ["./home.component.scss"]
 })
 export class HomeComponent implements OnInit, AfterViewInit {
+  @ViewChild("pagesModal", { static: true }) pagesModal: ModalDirective;
+
   libraryForm = new FormGroup({
     jSessionId: new FormControl("", Validators.required),
     bookId: new FormControl("", Validators.required),
@@ -54,6 +57,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
           this.pagesText += "'" + this.pages[this.pages.length - 1] + "'" + "]";
         }
       }
+      this.pagesModal.show();
     } else {
     }
   }
@@ -82,5 +86,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
         "." +
         page
     );
+  }
+
+  closeModal() {
+    this.pagesModal.hide();
   }
 }
