@@ -1,44 +1,59 @@
-<mdb-card class="mt-2 h-50">
-  <mdb-card-body class="h-100">
-    <webview #webViewId class="h-100" src="https://campusvirtual.unir.net/portal" disablewebsecurity></webview>
-  </mdb-card-body>
-</mdb-card>
-<div class="container-fluid mt-2 w-100 d-flex align-items-center justify-content-center">
+<div
+  class="container-fluid pt-2 w-100 h-100 d-flex align-items-center justify-content-center"
+>
   <div class="col col-lg-8">
     <mdb-card>
       <mdb-card-body>
         <!--Title-->
         <mdb-card-title>
-          <h4>Descargar Libro</h4>
+          <h4>Generar URL de descarga</h4>
         </mdb-card-title>
 
         <!--Text-->
         <mdb-card-text>
-          Aplicación que sirve para descargar PDF de la librería de streaming Ingebook. Para
-          ello debemos estar conectados.
+          Aplicación que sirve para generar el id, que se necesita para hacer la
+          petición.
+          <br />
+          Para ello debemos estar conectados en la plataforma de libreria
+          streaming IngeBook.
           <br />Se aprobecha de las peticiones GET:
           http://bv.unir.net:2116/ib/IB_Browser?pagina=1&libro=4143&ultpag=1&id=f38dc7a54df8773c3118b2710ff375f85b210fce
         </mdb-card-text>
-
       </mdb-card-body>
     </mdb-card>
-    <button (click)="download()">DOWNLOAD</button>
+
     <mdb-card class="mt-2">
       <mdb-card-body>
-        <form (ngSubmit)="onSubmit()" [formGroup]="libraryForm" class="text-center  pt-2 pb-2">
+        <form
+          (ngSubmit)="onSubmit()"
+          [formGroup]="libraryForm"
+          class="text-center  pt-2 pb-2"
+        >
           <!-- JSESSIONID -->
-          <input formControlName="jSessionId" type="text" id="FormJSessionId" class="form-control mb-4"
-            placeholder="JSESSIONID" />
+          <input
+            formControlName="jSessionId"
+            type="text"
+            id="FormJSessionId"
+            class="form-control mb-4"
+            placeholder="JSESSIONID"
+          />
           <small id="jSessionIdHelp" class="form-text text-muted mb-4">
             El valor de la cookie JSESSIONID, para ello debemos estar logeado en
             la librearia.
             <br />
             Se puede usar la extensión EditThisCookie de Chrome para recogerla:
-            <a
-              class="blue-text">https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=es</a>
+            <a class="blue-text"
+              >https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=es</a
+            >
           </small>
           <!-- Book ID -->
-          <input formControlName="bookId" type="text" id="FormBookId" class="form-control" placeholder="Book ID" />
+          <input
+            formControlName="bookId"
+            type="text"
+            id="FormBookId"
+            class="form-control"
+            placeholder="Book ID"
+          />
           <small id="bookIdHelp" class="form-text text-muted mb-4">
             El ID del libro por ejemplo, Matemática Discreta y Aplicaciones.
             4143
@@ -46,7 +61,13 @@
 
           <!-- Page -->
           <ng-container *ngIf="!libraryForm.controls.isMultipleDownload.value">
-            <input formControlName="pageFrom" type="text" id="FormPage" class="form-control" placeholder="Page" />
+            <input
+              formControlName="pageFrom"
+              type="text"
+              id="FormPage"
+              class="form-control"
+              placeholder="Page"
+            />
             <small id="pageHelp" class="form-text text-muted mb-4">
               El número de página.
               {{ libraryForm.controls.isMultipleDownload.value }} a
@@ -57,13 +78,23 @@
             <div class="form-row mb-4">
               <div class="col">
                 <!-- Page From -->
-                <input formControlName="pageFrom" type="text" id="FormPageFrom" class="form-control"
-                  placeholder="Page From" />
+                <input
+                  formControlName="pageFrom"
+                  type="text"
+                  id="FormPageFrom"
+                  class="form-control"
+                  placeholder="Page From"
+                />
               </div>
               <div class="col">
                 <!-- Page To -->
-                <input formControlName="pageTo" type="text" id="FormPageTo" class="form-control"
-                  placeholder="Page To" />
+                <input
+                  formControlName="pageTo"
+                  type="text"
+                  id="FormPageTo"
+                  class="form-control"
+                  placeholder="Page To"
+                />
               </div>
             </div>
             <small id="pageHelp" class="form-text text-muted mb-4">
@@ -74,17 +105,101 @@
           <!-- Multiple -->
           <div class="row">
             <div class="col-md-6 mx-auto d-flex justify-content-center">
-              <mdb-checkbox formControlName="isMultipleDownload" [default]="true"><span class="white-text">Descargar
-                  intervalo de páginas</span></mdb-checkbox>
+              <mdb-checkbox
+                formControlName="isMultipleDownload"
+                [default]="true"
+                ><span class="white-text"
+                  >Descargar intervalo de páginas</span
+                ></mdb-checkbox
+              >
             </div>
           </div>
 
           <!-- Download button -->
           <button mdbBtn color="info" block="true" class="my-4" type="submit">
-            Descargar
+            Generar
           </button>
         </form>
       </mdb-card-body>
     </mdb-card>
+  </div>
+</div>
+
+<!-- MODAL -->
+<button
+  type="button"
+  mdbBtn
+  color="primary"
+  class="relative waves-light"
+  (click)="basicModal.show()"
+  mdbWavesEffect
+>
+  Abrir Modal
+</button>
+
+<div
+  mdbModal
+  #basicModal="mdbModal"
+  class="modal fade pt-3"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="myBasicModalLabel"
+  aria-hidden="true"
+  [config]="{ ignoreBackdropClick: true }"
+>
+  <div
+    class="modal-dialog modal-dialog-centered modal-lg w-100 h-100"
+    role="document"
+  >
+    <div class="modal-content">
+      <div class="modal-header">
+        <button
+          type="button"
+          class="close pull-right"
+          aria-label="Close"
+          (click)="basicModal.hide()"
+        >
+          <span aria-hidden="true">×</span>
+        </button>
+        <h4 class="modal-title w-100 black-text" id="myModalLabel">
+          Array de URL Copiar y Pegar dentro del programa de Python
+        </h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group purple-border">
+          <label for="pagesArrayTextarea">Pages Array</label>
+          <textarea
+            [(ngModel)]="pagesText"
+            class="form-control"
+            id="pagesTextArea"
+            rows="10"
+          >
+          </textarea>
+        </div>
+      </div>
+      <!-- <div class="modal-body">
+        pages=[
+        <span *ngFor="let page of pages; first as isFirst; last as isLast">
+          <ng-container *ngIf="!isLast"> {{ page }}, </ng-container>
+          <ng-container *ngIf="isLast">
+            {{ page }}
+          </ng-container>
+        </span>
+        ]
+      </div> -->
+      <div class="modal-footer">
+        <button
+          type="button"
+          mdbBtn
+          color="secondary"
+          class="waves-light"
+          aria-label="Close"
+          (click)="basicModal.hide()"
+          mdbWavesEffect
+        >
+          Close
+        </button>
+      </div>
+    </div>
   </div>
 </div>

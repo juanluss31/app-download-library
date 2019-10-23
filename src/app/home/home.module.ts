@@ -11,7 +11,6 @@ import { HomeComponent } from "./home.component";
 import { SharedModule } from "../shared/shared.module";
 
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { CookieService } from "ngx-cookie-service";
 
 // https://mdbootstrap.com
 import { MDBBootstrapModule } from "angular-bootstrap-md";
@@ -25,7 +24,7 @@ import { MDBBootstrapModule } from "angular-bootstrap-md";
     FormsModule,
     ReactiveFormsModule
   ],
-  providers: [CookieService],
+  providers: [],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })
 export class HomeModule {}

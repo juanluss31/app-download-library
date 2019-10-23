@@ -72,24 +72,6 @@ try {
       createWindow();
     }
   });
-
-  // app.on("session-created", session => {
-  //   session.on("will-download", (e, item, contents) => {
-  //     let hostWebContents = contents;
-  //     if (contents.getType() === "webview") {
-  //       const hostWebContents = contents.hostWebContents;
-  //       console.log("hostWebContents");
-  //       console.log(e);
-  //       console.log(item.setSavePath("/download/1.pdf"));
-  //       console.log(contents);
-  //     }
-  //     const hostWin = BrowserWindow.fromWebContents(hostWebContents);
-  //     console.log("hostWin");
-  //     console.log(e);
-  //     console.log(item);
-  //     console.log(contents);
-  //   });
-  // });
 } catch (e) {
   // Catch Error
   // throw e;
