@@ -1,4 +1,5 @@
 # from urllib.parse import urlparse
+from PyPDF2 import PdfFileMerger
 from urllib import parse
 import os
 import sys
@@ -47,6 +48,18 @@ for page in pages:
     print('Current page URL:' + page)
 
 print("Agur eta jan Yogur!")
+
+
+pdfs = [archivo for archivo in os.listdir(
+    downloadPath) if archivo.endswith(".pdf")]
+nombre_archivo_salida = bookId + ".pdf"
+fusionador = PdfFileMerger()
+
+for pdf in pdfs:
+    fusionador.append(open(pdf, 'rb'))
+
+with open(nombre_archivo_salida, 'wb') as salida:
+    fusionador.write(salida)
 # downloadFile(url, downloadPath + fileName)
 # print('file downloaded...')
 # print('exiting program...')
