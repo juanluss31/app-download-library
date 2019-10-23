@@ -1,6 +1,4 @@
-<div
-  class="container-fluid h-100 w-100 d-flex align-items-center justify-content-center"
->
+<div class="container-fluid h-100 w-100 d-flex align-items-center justify-content-center">
   <div class="col col-lg-8">
     <mdb-card>
       <mdb-card-body>
@@ -11,44 +9,30 @@
 
         <!--Text-->
         <mdb-card-text>
-          Aplicación que sirve para descargar PDF de la librería de UNIR. Para
+          Aplicación que sirve para descargar PDF de la librería de streaming Ingebook. Para
           ello debemos estar conectados.
           <br />Se aprobecha de las peticiones GET:
           http://bv.unir.net:2116/ib/IB_Browser?pagina=1&libro=4143&ultpag=1&id=f38dc7a54df8773c3118b2710ff375f85b210fce
         </mdb-card-text>
 
-        <!-- <a href="#" mdbBtn color="primary" mdbWavesEffect>Button</a> -->
-
-        <form
-          (ngSubmit)="onSubmit()"
-          [formGroup]="libraryForm"
-          class="text-center border border-light p-5"
-        >
+      </mdb-card-body>
+    </mdb-card>
+    <mdb-card class="mt-5">
+      <mdb-card-body>
+        <form (ngSubmit)="onSubmit()" [formGroup]="libraryForm" class="text-center  p-5">
           <!-- JSESSIONID -->
-          <input
-            formControlName="jSessionId"
-            type="text"
-            id="FormJSessionId"
-            class="form-control mb-4"
-            placeholder="JSESSIONID"
-          />
+          <input formControlName="jSessionId" type="text" id="FormJSessionId" class="form-control mb-4"
+            placeholder="JSESSIONID" />
           <small id="jSessionIdHelp" class="form-text text-muted mb-4">
             El valor de la cookie JSESSIONID, para ello debemos estar logeado en
             la librearia.
             <br />
             Se puede usar la extensión EditThisCookie de Chrome para recogerla:
-            <a class="blue-text"
-              >https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=es</a
-            >
+            <a
+              class="blue-text">https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=es</a>
           </small>
           <!-- Book ID -->
-          <input
-            formControlName="bookId"
-            type="text"
-            id="FormBookId"
-            class="form-control"
-            placeholder="Book ID"
-          />
+          <input formControlName="bookId" type="text" id="FormBookId" class="form-control" placeholder="Book ID" />
           <small id="bookIdHelp" class="form-text text-muted mb-4">
             El ID del libro por ejemplo, Matemática Discreta y Aplicaciones.
             4143
@@ -56,12 +40,7 @@
 
           <!-- Page -->
           <ng-container *ngIf="!libraryForm.controls.isMultipleDownload.value">
-            <input
-              type="text"
-              id="FormPage"
-              class="form-control"
-              placeholder="Page"
-            />
+            <input formControlName="pageFrom" type="text" id="FormPage" class="form-control" placeholder="Page" />
             <small id="pageHelp" class="form-text text-muted mb-4">
               El número de página.
               {{ libraryForm.controls.isMultipleDownload.value }} a
@@ -72,21 +51,13 @@
             <div class="form-row mb-4">
               <div class="col">
                 <!-- Page From -->
-                <input
-                  type="text"
-                  id="FormPageFrom"
-                  class="form-control"
-                  placeholder="Page From"
-                />
+                <input formControlName="pageFrom" type="text" id="FormPageFrom" class="form-control"
+                  placeholder="Page From" />
               </div>
               <div class="col">
                 <!-- Page To -->
-                <input
-                  type="text"
-                  id="FormPageTo"
-                  class="form-control"
-                  placeholder="Page To"
-                />
+                <input formControlName="pageTo" type="text" id="FormPageTo" class="form-control"
+                  placeholder="Page To" />
               </div>
             </div>
             <small id="pageHelp" class="form-text text-muted mb-4">
@@ -97,13 +68,8 @@
           <!-- Multiple -->
           <div class="row">
             <div class="col-md-6 mx-auto d-flex justify-content-center">
-              <mdb-checkbox
-                formControlName="isMultipleDownload"
-                [default]="true"
-                ><span class="white-text"
-                  >Descargar intervalo de páginas</span
-                ></mdb-checkbox
-              >
+              <mdb-checkbox formControlName="isMultipleDownload" [default]="true"><span class="white-text">Descargar
+                  intervalo de páginas</span></mdb-checkbox>
             </div>
           </div>
 

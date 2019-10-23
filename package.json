@@ -1,11 +1,11 @@
 {
-  "name": "angular-electron",
-  "version": "6.2.0",
-  "description": "Angular 8 with Electron (Typescript + SASS + Hot Reload)",
-  "homepage": "https://github.com/maximegris/angular-electron",
+  "name": "app-download-library",
+  "version": "0.0.1",
+  "description": "Aplicacion que sirve para descargar libros desde la plataforma Ingebook",
+  "homepage": "https://github.com/Izayer/app-download-library",
   "author": {
-    "name": "Maxime GRIS",
-    "email": "maxime.gris@gmail.com"
+    "name": "Iker Izaguirre",
+    "email": "iker_izagirre@hotmail.com"
   },
   "keywords": [
     "angular",
@@ -91,6 +91,8 @@
     "angular-bootstrap-md": "^8.4.0",
     "animate.css": "^3.7.2",
     "chart.js": "^2.5.0",
-    "hammerjs": "^2.0.8"
+    "hammerjs": "^2.0.8",
+    "ngx-cookie": "^4.1.2",
+    "ngx-cookie-service": "^2.2.0"
   }
 }
