@@ -11,6 +11,8 @@ import { HomeComponent } from "./home.component";
 import { SharedModule } from "../shared/shared.module";
 
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { ToastrModule } from "ngx-toastr";
 
 // https://mdbootstrap.com
 import { MDBBootstrapModule } from "angular-bootstrap-md";
@@ -22,7 +24,9 @@ import { MDBBootstrapModule } from "angular-bootstrap-md";
     HomeRoutingModule,
     MDBBootstrapModule.forRoot(),
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    BrowserAnimationsModule,
+    ToastrModule.forRoot()
   ],
   providers: [],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]

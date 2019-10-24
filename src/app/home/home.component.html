@@ -37,6 +37,13 @@
             class="form-control mb-4"
             placeholder="JSESSIONID"
           />
+          <input
+            formControlName="ezProxy"
+            type="text"
+            id="FormEzProxy"
+            class="form-control mb-4"
+            placeholder="ezproxy"
+          />
           <small id="jSessionIdHelp" class="form-text text-muted mb-4">
             El valor de la cookie JSESSIONID, para ello debemos estar logeado en
             la librearia.
@@ -140,18 +147,15 @@
 
 <div
   mdbModal
+  style="overflow-y: auto"
   #pagesModal="mdbModal"
-  class="modal fade pt-3"
+  class="modal fade"
   tabindex="-1"
   role="dialog"
-  aria-labelledby="myBasicModalLabel"
+  aria-labelledby="pagesModal"
   aria-hidden="true"
-  [config]="{ ignoreBackdropClick: true }"
 >
-  <div
-    class="modal-dialog modal-dialog-centered modal-lg w-100 h-100"
-    role="document"
-  >
+  <div class="modal-dialog modal-fluid" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button
@@ -162,32 +166,36 @@
         >
           <span aria-hidden="true">×</span>
         </button>
-        <h4 class="modal-title w-100 black-text" id="myModalLabel">
-          Array de URL Copiar y Pegar dentro del programa de Python
-        </h4>
+        <h4 class="modal-title w-100" id="myModalLabel">Modal title</h4>
       </div>
       <div class="modal-body">
-        <div class="form-group purple-border">
-          <label for="pagesArrayTextarea">Pages Array</label>
-          <textarea
-            [(ngModel)]="pagesText"
-            class="form-control"
-            id="pagesTextArea"
-            rows="10"
-          >
-          </textarea>
+        <div class="row" *ngFor="let page of pages">
+          <div class="col-4 d-flex justify-content-center">
+            <!-- <button type="button" mdbBtn color="secondary" mdbWavesEffect>
+              {{ page.pageNumber }}
+            </button> -->
+            <button
+              type="button"
+              mdbBtn
+              color="info"
+              rounded="true"
+              size="lg"
+              (click)="download(page)"
+            >
+              {{ page.pageNumber
+              }}<mdb-icon
+                fas
+                icon="download"
+                class="ml-2"
+                aria-hidden="true"
+              ></mdb-icon>
+            </button>
+          </div>
+          <div class="col-8">
+            {{ page.url }}
+          </div>
         </div>
       </div>
-      <!-- <div class="modal-body">
-        pages=[
-        <span *ngFor="let page of pages; first as isFirst; last as isLast">
-          <ng-container *ngIf="!isLast"> {{ page }}, </ng-container>
-          <ng-container *ngIf="isLast">
-            {{ page }}
-          </ng-container>
-        </span>
-        ]
-      </div> -->
       <div class="modal-footer">
         <button
           type="button"
