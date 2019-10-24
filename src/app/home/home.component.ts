@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from "@angular/core";
-import { Hmacsha1Service } from "../core/services";
+import { Hmacsha1Service, ElectronService } from "../core/services";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { ModalDirective } from "angular-bootstrap-md";
 
@@ -23,7 +23,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   pages: Array<string> = [];
   pagesText: string = "";
-  constructor(private hMacSha1Service: Hmacsha1Service) {}
+  constructor(
+    private hMacSha1Service: Hmacsha1Service,
+    private electronService: ElectronService
+  ) {}
   // http://bv.unir.net:2116/ib/NPcd/IB_Escritorio_Visualizar?cod_primaria=1000193&libro=4143
   // http://bv.unir.net:2116/ib/IB_Browser?pagina=1&libro=4143&ultpag=1&id=f38dc7a54df8773c3118b2710ff375f85b210fce
   ngOnInit() {}
@@ -90,5 +93,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   closeModal() {
     this.pagesModal.hide();
+  }
+
+  donwloadIpcRequest() {
+    if (this.pages.length > 0) {
+      for (const page of this.pages) {
+        this.electronService.ipcRenderer.sendSync("get-pdf-request", "ping");
+      }
+    }
   }
 }
