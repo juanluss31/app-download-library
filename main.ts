@@ -1,7 +1,6 @@
 import { app, BrowserWindow, screen, ipcMain } from "electron";
 import * as path from "path";
 import * as url from "url";
-import * as http from "http";
 
 let win, serve;
 const args = process.argv.slice(1);
@@ -49,74 +48,8 @@ function createWindow() {
     // when you should delete the corresponding element.
     win = null;
   });
-
-  ipcMain.on("get-pdf-request", (event, arg) => {
-    getPdfRequest(event, arg);
-    console.log("sartu da");
-  });
-  ipcMain.on("set-cookies", (event, arg) => {
-    setCookies(arg);
-    event.returnValue = "";
-  });
 }
 
-let cookies: string = "";
-function setCookies(arg) {
-  cookies = arg;
-}
-function getPdfRequest(event: Electron.IpcMainEvent, arg) {
-  const myURL = new URL(arg.url);
-  const path = url.parse(arg.url).path;
-  const pageNumber = myURL.searchParams.get("pagina");
-  const libro = myURL.searchParams.get("libro");
-
-  // http://bv.unir.net:2116/ib/IB_Browser?pagina=1&libro=4143&ultpag=1&id=a201e3881ada281aed23c848a8dc52c54b7d4719
-  let options: string | http.RequestOptions | url.URL = {
-    host: myURL.hostname,
-    port: myURL.port,
-    path: path,
-    method: "GET",
-    headers: {
-      Cookie: cookies
-    }
-  };
-  let results = "";
-  let req = http.request(options, res => {
-    res.setEncoding("binary");
-    res.on("data", chunk => {
-      // results = results + chunk;
-      console.log(chunk);
-      //TODO
-    });
-    res.on("end", () => {
-      console.log("res", res);
-      //TODO
-      console.log("end request");
-      event.reply("get-pdf-request", {
-        error: false,
-        data: results,
-        pageNumber: pageNumber,
-        bookId: libro
-      });
-      console.log("reply eta gero");
-      event.returnValue = "";
-    });
-  });
-
-  req.on("error", e => {
-    console.log("error", e);
-    event.reply("get-pdf-request", {
-      error: true,
-      data: e,
-      pageNumber: pageNumber,
-      bookId: libro
-    });
-    console.log("reply eta gero");
-    event.returnValue = "";
-    //TODO
-  });
-  req.end();
-}
 try {
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.

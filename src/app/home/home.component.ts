@@ -3,6 +3,7 @@ import { Hmacsha1Service, ElectronService } from "../core/services";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { ModalDirective } from "angular-bootstrap-md";
 import { ToastrService } from "ngx-toastr";
+import { WriteStream } from "fs";
 
 @Component({
   selector: "app-home",
@@ -11,6 +12,11 @@ import { ToastrService } from "ngx-toastr";
 })
 export class HomeComponent implements OnInit, AfterViewInit {
   @ViewChild("pagesModal", { static: true }) pagesModal: ModalDirective;
+
+  cookies: string = "";
+  libroId: number = 0;
+
+  savePath: string = "";
 
   libraryForm = new FormGroup({
     jSessionId: new FormControl("", Validators.required),
@@ -21,47 +27,18 @@ export class HomeComponent implements OnInit, AfterViewInit {
     isMultipleDownload: new FormControl(false)
   });
 
-  libroId: number = 0;
-
   pages: Array<object> = [];
   pagesText: string = "";
+
   constructor(
     private hMacSha1Service: Hmacsha1Service,
     private electronService: ElectronService,
     private toastr: ToastrService
   ) {}
+
   // http://bv.unir.net:2116/ib/NPcd/IB_Escritorio_Visualizar?cod_primaria=1000193&libro=4143
   // http://bv.unir.net:2116/ib/IB_Browser?pagina=1&libro=4143&ultpag=1&id=f38dc7a54df8773c3118b2710ff375f85b210fce
-  ngOnInit() {
-    this.electronService.ipcRenderer.on("get-pdf-request", (event, arg) => {
-      if (!arg.error) {
-        try {
-          if (!this.electronService.fs.existsSync(arg.bookId)) {
-            this.electronService.fs.mkdirSync(arg.bookId);
-          }
-        } catch (err) {
-          console.error(err);
-        }
-        this.electronService.fs.writeFileSync(
-          arg.bookId + "/" + arg.pageNumber + ".pdf",
-          arg.data
-          // err => {
-          //   if (err) {
-          //     this.toastr.error(
-          //       "Error al descargar o crear fichero",
-          //       arg.pageNumber
-          //     );
-          //     throw err;
-          //   }
-          //   this.toastr.error(
-          //     "Se ha generado correctamente",
-          //     arg.pageNumber + ".pdf"
-          //   );
-          // }
-        );
-      }
-    });
-  }
+  ngOnInit() {}
 
   ngAfterViewInit() {}
 
@@ -70,15 +47,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.pagesText = "";
 
     if (this.libraryForm.valid) {
-      let cookies: string =
+      this.cookies =
         "JSESSIONID=" +
         this.libraryForm.controls.jSessionId.value +
         "; " +
         "ezproxy=" +
         this.libraryForm.controls.ezProxy.value;
 
-      this.electronService.ipcRenderer.sendSync("set-cookies", cookies);
       this.libroId = this.libraryForm.controls.bookId.value;
+
       if (!this.libraryForm.controls.isMultipleDownload.value) {
         let page: number = parseInt(this.libraryForm.controls.pageFrom.value);
         if (page > 0) {
@@ -88,7 +65,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       } else {
         let pageFrom = parseInt(this.libraryForm.controls.pageFrom.value);
         let pageTo = parseInt(this.libraryForm.controls.pageTo.value);
-        if (pageFrom < pageTo) {
+        if (pageFrom < pageTo && pageFrom > 0) {
           for (let pageIndex = pageFrom; pageIndex <= pageTo; pageIndex++) {
             this.getPage(pageIndex);
           }
@@ -135,15 +112,80 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.pagesModal.hide();
   }
 
-  donwloadIpcRequest() {
-    if (this.pages.length > 0) {
-      for (const page of this.pages) {
-        this.electronService.ipcRenderer.sendSync("get-pdf-request", page);
-      }
-    }
+  getPdfRequest(page) {
+    const myURL = new URL(page.url);
+    const path = this.electronService.url.parse(page.url).path;
+    const pageNumber = myURL.searchParams.get("pagina");
+    const libro = myURL.searchParams.get("libro");
+
+    let ws: WriteStream = this.electronService.fs.createWriteStream(
+      this.savePath + "/" + libro + "/" + pageNumber
+    );
+
+    ws.on("open", () => {
+      // http://bv.unir.net:2116/ib/IB_Browser?pagina=1&libro=4143&ultpag=1&id=a201e3881ada281aed23c848a8dc52c54b7d4719
+      let options = {
+        host: myURL.hostname,
+        port: myURL.port,
+        path: path,
+        method: "GET",
+        headers: {
+          Cookie: this.cookies
+        }
+      };
+      let results = "";
+      let req = this.electronService.http.request(options, res => {
+        // res.setEncoding("binary");
+        res.on("data", chunk => {
+          // results = results + chunk;
+          //TODO
+          ws.write(chunk);
+        });
+        res.on("end", () => {
+          ws.end();
+        });
+      });
+
+      req.on("error", e => {});
+
+      req.end();
+    });
   }
 
   download(page) {
-    this.electronService.ipcRenderer.sendSync("get-pdf-request", page);
+    try {
+      this.savePath = "";
+      this.savePath = this.electronService.remote.dialog.showOpenDialogSync({
+        properties: ["openDirectory"]
+      })[0];
+
+      if (this.savePath !== "") {
+        if (
+          !this.electronService.fs.existsSync(
+            this.savePath + "/" + this.libroId
+          )
+        ) {
+          this.electronService.fs.mkdirSync(this.savePath + "/" + this.libroId);
+        }
+      }
+      // }
+    } catch (err) {
+      // console.error(err);
+    }
   }
 }
+
+// function download(url, tempFilepath, filepath, callback) {
+//   var tempFile = fs.createWriteStream(tempFilepath);
+//   tempFile.on('open', function (fd) {
+//     http.request(url, function (res) {
+//       res.on('data', function (chunk) {
+//         tempFile.write(chunk);
+//       }).on('end', function () {
+//         tempFile.end();
+//         fs.renameSync(tempFile.path, filepath);
+//         return callback(filepath);
+//       });
+//     });
+//   });
+// }
