@@ -7,6 +7,8 @@ import * as childProcess from "child_process";
 import * as fs from "fs";
 import * as http from "http";
 import * as url from "url";
+import * as pdfMerge from "pdfmerge";
+import * as path from "path";
 
 @Injectable({
   providedIn: "root"
@@ -19,6 +21,8 @@ export class ElectronService {
   fs: typeof fs;
   http: typeof http;
   url: typeof url;
+  pdfMerge: typeof pdfMerge;
+  path: typeof path;
 
   get isElectron() {
     return window && window.process && window.process.type;
@@ -35,6 +39,8 @@ export class ElectronService {
       this.fs = window.require("fs");
       this.http = window.require("http");
       this.url = require("url");
+      this.pdfMerge = require("pdfmerge");
+      this.path = require("path");
     }
   }
 }

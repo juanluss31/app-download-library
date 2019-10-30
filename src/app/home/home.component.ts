@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, ViewChild } from "@angular/core";
 import { Hmacsha1Service, ElectronService } from "../core/services";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { ModalDirective } from "angular-bootstrap-md";
-import { ToastrService } from "ngx-toastr";
+import { ToastrService, ToastContainerDirective } from "ngx-toastr";
 import { WriteStream } from "fs";
 
 @Component({
@@ -13,6 +13,9 @@ import { WriteStream } from "fs";
 export class HomeComponent implements OnInit, AfterViewInit {
   @ViewChild("pagesModal", { static: true }) pagesModal: ModalDirective;
 
+  @ViewChild(ToastContainerDirective, { static: true })
+  toastContainer: ToastContainerDirective;
+
   cookies: string = "";
   libroId: number = 0;
 
@@ -22,10 +25,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
   downloadAllIndex: number = 0;
 
   libraryForm = new FormGroup({
-    jSessionId: new FormControl("", Validators.required),
-    ezProxy: new FormControl("", Validators.required),
-    bookId: new FormControl("", Validators.required),
-    pageFrom: new FormControl("", Validators.required),
+    jSessionId: new FormControl(
+      "8E79C4F1093D792EBB1E997C3E3B4246",
+      Validators.required
+    ),
+    ezProxy: new FormControl("KRTwsCTwvNpfqfJ", Validators.required),
+    bookId: new FormControl("4143", Validators.required),
+    pageFrom: new FormControl("1", Validators.required),
     pageTo: new FormControl(""),
     isMultipleDownload: new FormControl(false)
   });
@@ -41,7 +47,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   // http://bv.unir.net:2116/ib/NPcd/IB_Escritorio_Visualizar?cod_primaria=1000193&libro=4143
   // http://bv.unir.net:2116/ib/IB_Browser?pagina=1&libro=4143&ultpag=1&id=f38dc7a54df8773c3118b2710ff375f85b210fce
-  ngOnInit() {}
+  ngOnInit() {
+    this.toastr.overlayContainer = this.toastContainer;
+  }
 
   ngAfterViewInit() {}
 
@@ -149,11 +157,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
         res.on("end", () => {
           ws.end();
 
-          console.log("results", responseResults);
           if (responseResults !== "") {
             this.toastr.success(
               "Fichero correcto: " + pageNumber + ".pdf",
-              "Descargado"
+              "Descargado",
+              {
+                timeOut: 5000,
+                positionClass: "toast-bottom-right"
+              }
             );
           } else {
             this.toastr.error(
@@ -161,7 +172,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 pageNumber +
                 ".pdf" +
                 ", Vuelve a generar las cookies en la biblioteca",
-              "Fichero vacio"
+              "Fichero vacio",
+              {
+                timeOut: 5000,
+                positionClass: "toast-bottom-right"
+              }
             );
           }
         });
@@ -171,7 +186,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
         // console.log("request error", e);
         this.toastr.error(
           "Error en el fichero: " + pageNumber + ".pdf",
-          "Error de Petición"
+          "Error de Petición",
+          {
+            timeOut: 5000,
+            positionClass: "toast-bottom-right"
+          }
         );
       });
 
@@ -224,19 +243,47 @@ export class HomeComponent implements OnInit, AfterViewInit {
       return false;
     }
   }
-}
 
-// function download(url, tempFilepath, filepath, callback) {
-//   var tempFile = fs.createWriteStream(tempFilepath);
-//   tempFile.on('open', function (fd) {
-//     http.request(url, function (res) {
-//       res.on('data', function (chunk) {
-//         tempFile.write(chunk);
-//       }).on('end', function () {
-//         tempFile.end();
-//         fs.renameSync(tempFile.path, filepath);
-//         return callback(filepath);
-//       });
-//     });
-//   });
-// }
+  mergePdf() {
+    let sourceFiles: Array<string> = [];
+    sourceFiles = this.electronService.remote.dialog.showOpenDialogSync({
+      properties: ["openFile", "multiSelections"],
+      filters: [{ name: "PDF", extensions: ["pdf"] }]
+    });
+    if (sourceFiles) {
+      if (sourceFiles.length > 1) {
+        let destinationPath: string = "";
+        let extension = this.electronService.path.extname(sourceFiles[0]);
+        let destFirstFile = this.electronService.path.basename(
+          sourceFiles[0],
+          extension
+        );
+        let destLastFile = this.electronService.path.basename(
+          sourceFiles[sourceFiles.length - 1],
+          extension
+        );
+
+        destinationPath = destFirstFile + "-" + destLastFile + extension;
+        console.log("destinationPath", destinationPath);
+        console.log("extension", extension);
+        console.log("destFirstFile", destFirstFile);
+        console.log("destLastFile", destLastFile);
+        // this.electronService.easyPdfMerge(sourceFiles, destinationPath, err => {
+        //   if (err) {
+        //     return console.log(err);
+        //   }
+        //   console.log("Success");
+        // });
+        console.log(this.electronService.pdfMerge);
+        this.electronService
+          .pdfMerge(sourceFiles, destinationPath)
+          .then(function(done) {
+            console.log(done); // success
+          })
+          .catch(function(error) {
+            console.error(error.code); // Logs error code if an error occurs
+          });
+      }
+    }
+  }
+}
