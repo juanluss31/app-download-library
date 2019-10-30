@@ -18,6 +18,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   savePath: string = "";
 
+  isDownloadAll: boolean = false;
+  downloadAllIndex: number = 0;
+
   libraryForm = new FormGroup({
     jSessionId: new FormControl("", Validators.required),
     ezProxy: new FormControl("", Validators.required),
@@ -118,10 +121,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
     const pageNumber = myURL.searchParams.get("pagina");
     const libro = myURL.searchParams.get("libro");
 
-    let ws: WriteStream = this.electronService.fs.createWriteStream(
-      this.savePath + "/" + libro + "/" + pageNumber
-    );
+    let responseResults: string = "";
 
+    let ws: WriteStream = this.electronService.fs.createWriteStream(
+      this.savePath + "/" + libro + "/" + pageNumber + ".pdf",
+      { flags: "w" }
+    );
     ws.on("open", () => {
       // http://bv.unir.net:2116/ib/IB_Browser?pagina=1&libro=4143&ultpag=1&id=a201e3881ada281aed23c848a8dc52c54b7d4719
       let options = {
@@ -133,26 +138,70 @@ export class HomeComponent implements OnInit, AfterViewInit {
           Cookie: this.cookies
         }
       };
-      let results = "";
+
       let req = this.electronService.http.request(options, res => {
         // res.setEncoding("binary");
         res.on("data", chunk => {
-          // results = results + chunk;
+          responseResults += chunk.toString("utf8");
           //TODO
           ws.write(chunk);
         });
         res.on("end", () => {
           ws.end();
+
+          console.log("results", responseResults);
+          if (responseResults !== "") {
+            this.toastr.success(
+              "Fichero correcto: " + pageNumber + ".pdf",
+              "Descargado"
+            );
+          } else {
+            this.toastr.error(
+              "Error en el fichero: " +
+                pageNumber +
+                ".pdf" +
+                ", Vuelve a generar las cookies en la biblioteca",
+              "Fichero vacio"
+            );
+          }
         });
       });
 
-      req.on("error", e => {});
+      req.on("error", e => {
+        // console.log("request error", e);
+        this.toastr.error(
+          "Error en el fichero: " + pageNumber + ".pdf",
+          "Error de Petición"
+        );
+      });
 
-      req.end();
+      req.end(() => {
+        this.downloadAllIndex++;
+        if (this.isDownloadAll && this.downloadAllIndex < this.pages.length) {
+          this.getPdfRequest(this.pages[this.downloadAllIndex]);
+        }
+      });
     });
   }
 
   download(page) {
+    if (this.createDirectory()) {
+      this.isDownloadAll = false;
+      this.getPdfRequest(page);
+    }
+  }
+
+  downloadAll() {
+    if (this.createDirectory()) {
+      this.isDownloadAll = true;
+      this.downloadAllIndex = 0;
+      if (this.pages.length > 0) {
+        this.getPdfRequest(this.pages[this.downloadAllIndex]);
+      }
+    }
+  }
+
+  createDirectory() {
     try {
       this.savePath = "";
       this.savePath = this.electronService.remote.dialog.showOpenDialogSync({
@@ -167,10 +216,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
         ) {
           this.electronService.fs.mkdirSync(this.savePath + "/" + this.libroId);
         }
+        return true;
       }
       // }
     } catch (err) {
       // console.error(err);
+      return false;
     }
   }
 }
