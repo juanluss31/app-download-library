@@ -4,6 +4,7 @@ import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { ModalDirective } from "angular-bootstrap-md";
 import { ToastrService, ToastContainerDirective } from "ngx-toastr";
 import { WriteStream } from "fs";
+import { PdfmergeService } from "../core/services/pdfmerge/pdfmerge.service";
 
 @Component({
   selector: "app-home",
@@ -26,10 +27,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   libraryForm = new FormGroup({
     jSessionId: new FormControl(
-      "8E79C4F1093D792EBB1E997C3E3B4246",
+      "EBA8B5EE56E2391C5E857DAE0394B27B",
       Validators.required
     ),
-    ezProxy: new FormControl("KRTwsCTwvNpfqfJ", Validators.required),
+    ezProxy: new FormControl("Pz9Jb5indGZor2E", Validators.required),
     bookId: new FormControl("4143", Validators.required),
     pageFrom: new FormControl("1", Validators.required),
     pageTo: new FormControl(""),
@@ -42,6 +43,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   constructor(
     private hMacSha1Service: Hmacsha1Service,
     private electronService: ElectronService,
+    private pdfMergeService: PdfmergeService,
     private toastr: ToastrService
   ) {}
 
@@ -263,24 +265,26 @@ export class HomeComponent implements OnInit, AfterViewInit {
           extension
         );
 
-        destinationPath = destFirstFile + "-" + destLastFile + extension;
-        console.log("destinationPath", destinationPath);
-        console.log("extension", extension);
-        console.log("destFirstFile", destFirstFile);
-        console.log("destLastFile", destLastFile);
-        // this.electronService.easyPdfMerge(sourceFiles, destinationPath, err => {
-        //   if (err) {
-        //     return console.log(err);
-        //   }
-        //   console.log("Success");
-        // });
-        console.log(this.electronService.pdfMerge);
-        this.electronService
+        let destDir = this.electronService.path.dirname(sourceFiles[0]);
+
+        let destinationFilePath =
+          destFirstFile + "-" + destLastFile + extension;
+
+        destinationPath = this.electronService.path.join(
+          destDir,
+          destinationFilePath
+        );
+
+        this.pdfMergeService
           .pdfMerge(sourceFiles, destinationPath)
-          .then(function(done) {
+          .then(done => {
             console.log(done); // success
+            this.toastr.success(destinationPath, "Fusion hecha: ", {
+              timeOut: 5000,
+              positionClass: "toast-bottom-full-width"
+            });
           })
-          .catch(function(error) {
+          .catch(error => {
             console.error(error.code); // Logs error code if an error occurs
           });
       }
