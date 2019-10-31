@@ -26,13 +26,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
   downloadAllIndex: number = 0;
 
   libraryForm = new FormGroup({
-    jSessionId: new FormControl(
-      "EBA8B5EE56E2391C5E857DAE0394B27B",
-      Validators.required
-    ),
-    ezProxy: new FormControl("Pz9Jb5indGZor2E", Validators.required),
-    bookId: new FormControl("4143", Validators.required),
-    pageFrom: new FormControl("1", Validators.required),
+    jSessionId: new FormControl("", Validators.required),
+    ezProxy: new FormControl("", Validators.required),
+    bookId: new FormControl("", Validators.required),
+    pageFrom: new FormControl("", Validators.required),
     pageTo: new FormControl(""),
     isMultipleDownload: new FormControl(false)
   });
@@ -278,14 +275,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.pdfMergeService
           .pdfMerge(sourceFiles, destinationPath)
           .then(done => {
-            console.log(done); // success
+            // console.log(done); // success
             this.toastr.success(destinationPath, "Fusion hecha: ", {
               timeOut: 5000,
               positionClass: "toast-bottom-full-width"
             });
           })
           .catch(error => {
-            console.error(error.code); // Logs error code if an error occurs
+            // console.error(error.code); // Logs error code if an error occurs
           });
       }
     }

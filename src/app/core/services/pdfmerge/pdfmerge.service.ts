@@ -47,11 +47,11 @@ export class PdfmergeService {
       // Push the specified output file to argumentsArray
       argumentsArray.push(outputFile);
       // Start pdfmerge python process :O
-      console.log(argumentsArray);
+
       let pdfmergepy = spawn("py", argumentsArray);
       // log stdout data to the console
       pdfmergepy.stdout.on("data", data => {
-        console.log(data.toString());
+        // console.log(data.toString());
       });
       // If PyPDF2 is not found then throw error :-)
       // If 'path not found' on input then throw error ;-)
@@ -77,7 +77,7 @@ export class PdfmergeService {
       // If error, check for the code and log to console
       pdfmergepy.on("error", err => {
         if (err.message === "spawn py -3 ENOENT") {
-          console.log("Please check if the PATH is correct!");
+          // console.log("Please check if the PATH is correct!");
         }
       });
     });
