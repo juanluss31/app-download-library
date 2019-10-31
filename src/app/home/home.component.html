@@ -6,18 +6,24 @@
       <mdb-card-body>
         <!--Title-->
         <mdb-card-title>
-          <h4>Generar URL de descarga</h4>
+          <h4>Descargar PDF Ingebook:</h4>
         </mdb-card-title>
 
         <!--Text-->
         <mdb-card-text>
-          Aplicación que sirve para generar el id, que se necesita para hacer la
-          petición.
-          <br />
-          Para ello debemos estar conectados en la plataforma de libreria
+          Aplicación que sirve para descargar páginas de la librería de
           streaming IngeBook.
+          <br />
+          Requerimientos para descargar:
+          <br />
+          Estar logeado en el campus de UNIR, abrir la Bibilioteca, y visualizar
+          el libro. Despúes coger las Cookies.
           <br />Se aprobecha de las peticiones GET:
           http://bv.unir.net:2116/ib/IB_Browser?pagina=1&libro=4143&ultpag=1&id=f38dc7a54df8773c3118b2710ff375f85b210fce
+          <br />
+          Requerimientos para fusionar PDFs:
+          <br />
+          Tener Python3 e instalar PyPDF2 (pip3 install PyPDF2)
         </mdb-card-text>
       </mdb-card-body>
     </mdb-card>
