@@ -36,8 +36,8 @@ export class ElectronService {
       this.childProcess = window.require("child_process");
       this.fs = window.require("fs");
       this.http = window.require("http");
-      this.url = require("url");
-      this.path = require("path");
+      this.url = window.require("url");
+      this.path = window.require("path");
     }
   }
 }

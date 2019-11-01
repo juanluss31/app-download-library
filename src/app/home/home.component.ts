@@ -282,7 +282,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
             });
           })
           .catch(error => {
-            // console.error(error.code); // Logs error code if an error occurs
+            console.log(error);
+            console.error(error.code); // Logs error code if an error occurs
           });
       }
     }

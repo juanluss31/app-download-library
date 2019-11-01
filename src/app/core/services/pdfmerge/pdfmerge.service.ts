@@ -21,8 +21,30 @@ export class PdfmergeService {
       // Require the default NodeJS path module
       let path = this.electronService.path;
       // initialize the array of arguments to be passed to pdfmerge.py
+      let pythonPath: string = "";
+      // pythonPath = path.join("dist", "pdfmerge.py");
+      pythonPath = path.join(
+        path.dirname(__dirname),
+        "..",
+        "src",
+        "extraResources",
+        "pdfmerge.py"
+      );
 
-      let argumentsArray = ["-3", "./dist/pdfmerge.py"];
+      // const args = process.argv.slice(1);
+      // const serve = args.some(val => val === "--serve");
+
+      // console.log(args);
+      // console.log(serve);
+      // if (serve) {
+      //   pythonPath = path.join(__dirname + ".unpack", "dist", "pdfmerge.py");
+      //   console.log("serve", pythonPath);
+      // } else {
+      //   pythonPath = path.join(process.resourcesPath, "pdfmerge.py");
+      //   console.log("app", pythonPath);
+      // }
+
+      let argumentsArray = ["-3", pythonPath];
       // let argumentsArray = [
       //   path.join(
       //     this.electronService.remote.app.getAppPath(),
@@ -51,11 +73,12 @@ export class PdfmergeService {
       let pdfmergepy = spawn("py", argumentsArray);
       // log stdout data to the console
       pdfmergepy.stdout.on("data", data => {
-        // console.log(data.toString());
+        console.log(data.toString());
       });
       // If PyPDF2 is not found then throw error :-)
       // If 'path not found' on input then throw error ;-)
       pdfmergepy.stderr.on("data", data => {
+        console.log("stderr", data.toString());
         if (data.toString().match("PdfFileWriter")) {
           error.code = 1;
           error.message =
@@ -76,8 +99,9 @@ export class PdfmergeService {
       });
       // If error, check for the code and log to console
       pdfmergepy.on("error", err => {
+        console.log(err);
         if (err.message === "spawn py -3 ENOENT") {
-          // console.log("Please check if the PATH is correct!");
+          console.log("Please check if the PATH is correct!");
         }
       });
     });

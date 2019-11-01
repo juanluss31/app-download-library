@@ -21,20 +21,15 @@
   ],
   "win": {
     "icon": "dist",
-    "target": [
-      "portable", "nsis"
-    ]
+    "target": ["portable", "nsis"]
   },
   "mac": {
     "icon": "dist",
-    "target": [
-      "dmg"
-    ]
+    "target": ["dmg"]
   },
   "linux": {
     "icon": "dist",
-    "target": [
-      "AppImage"
-    ]
-  }
+    "target": ["AppImage"]
+  },
+  "extraResources": ["src/extraResources/*"]
 }
