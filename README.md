@@ -21,7 +21,7 @@ With this sample, you can :
 Clone this repository locally :
 
 ```bash
-git clone https://github.com/Izayer/app-download-library.git
+git clone https://github.com/juanluss31/app-download-library.git
 ```
 
 Install dependencies with npm :
