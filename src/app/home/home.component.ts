@@ -61,7 +61,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
         "JSESSIONID=" +
         this.libraryForm.controls.jSessionId.value +
         "; " +
-        "ezproxy=" +
         this.libraryForm.controls.ezProxy.value;
 
       this.libroId = this.libraryForm.controls.bookId.value;
@@ -96,9 +95,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
     let id: string = "";
     id = this.generateHash(pageNumber);
 
-    // http://bv.unir.net:2116/ib/IB_Browser?pagina=1&libro=4143&ultpag=1&id=f38dc7a54df8773c3118b2710ff375f85b210fce
+    // https://www--ingebook--com.ujaen.debiblio.com/ib/IB_Browser?pagina=148&libro=4350&ultpag=150&id=40f1866e90bfc6437daeb4925e13844d6d7a932e
     let url =
-      "http://bv.unir.net:2116/ib/IB_Browser?pagina=" +
+      "https://www--ingebook--com.ujaen.debiblio.com/ib/IB_Browser?pagina=" +
       pageNumber +
       "&libro=" +
       this.libroId +
