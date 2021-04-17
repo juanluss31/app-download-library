@@ -1,3 +1,9 @@
+# IMPORTANTE:
+Funciona con la biblioteca INGEBOOK de la UJA.
+
+No descarga las páginas, solo genera las url a ellas. Para descargarlas se puede abrir la interfaz web y usar una extensión como [Simple mass downloader](https://chrome.google.com/webstore/detail/simple-mass-downloader/abdkkegmcbiomijcbdaodaflgehfffed) para automatizar el proceso.
+
+Dejo por aquí la descripción original:
 # Introduction
 
 Descargar libros de la biblioteca en streaming Ingebook.
